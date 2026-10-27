@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Personalized Recommendation System</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:30px 18px;font-family:Arial,sans-serif;color:#202124}
+.container{max-width:850px;margin:auto;background:#f3f5f8;padding:16px}
+header{text-align:center;margin-bottom:20px}
+h1{font-size:23px;margin:0 0 7px}
+.subtitle{font-size:12px;color:#6b7280}
+.card{background:white;border-radius:11px;padding:20px;margin-bottom:16px;box-shadow:0 2px 12px #0000000d}
+h2{font-size:16px;margin:0 0 18px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px 12px}
+label{display:block;font-size:12px;font-weight:bold;margin-bottom:7px}
+input,select,textarea{width:100%;padding:10px;border:1px solid #d8dce3;border-radius:6px;background:white;font:12px Arial}
+textarea{min-height:75px;resize:vertical}
+.full{grid-column:1/-1}
+button{width:100%;padding:12px;margin-top:14px;border:0;border-radius:5px;background:#5145e8;color:white;font-weight:bold;cursor:pointer}
+button:hover{background:#4035cf}
+.rec{background:#f7f8fa;border-left:3px solid #5145e8;border-radius:6px;padding:13px;margin-bottom:10px}
+.title{font-size:12px;font-weight:bold;margin-bottom:6px}
+.reason{font-size:11px;color:#657080;line-height:1.5}
+.score{font-size:11px;font-weight:bold;margin-top:7px}
+.error{padding:12px;color:#b42318;background:#fff0f0;border-radius:6px}
+.success{font-size:12px;color:#18794e}
+footer{text-align:center;font-size:11px;color:#7b8492;padding:10px}
+@media(max-width:600px){body{padding:12px 6px}.grid{grid-template-columns:1fr}.full{grid-column:auto}}
+</style>
+</head>
+<body><main class="container">
+<header><h1>Personalized Recommendation System</h1>
+<div class="subtitle">Get learning recommendations based on your interests and goals</div></header>
+
+<section class="card"><h2>User Profile</h2>
+<form method="POST"><div class="grid">
+<div><label>Name</label><input name="name" required value="{{profile.name}}"></div>
+<div><label>Age</label><input name="age" type="number" min="1" max="120" required value="{{profile.age}}"></div>
+<div><label>Field</label><input name="field" required value="{{profile.field}}"></div>
+<div><label>Interests</label><input name="interests" required value="{{profile.interests}}"></div>
+<div><label>Skill Level</label><select name="skill">
+{% for x in ['Beginner','Intermediate','Advanced'] %}<option {% if profile.skill==x %}selected{% endif %}>{{x}}</option>{% endfor %}
+</select></div>
+<div><label>Preferred Learning Type</label><select name="learning_type">
+{% for x in ['Practical','Theoretical','Video-Based','Project-Based','Mixed'] %}<option {% if profile.learning_type==x %}selected{% endif %}>{{x}}</option>{% endfor %}
+</select></div>
+<div class="full"><label>Learning Goal</label><textarea name="goal" required>{{profile.goal}}</textarea></div>
+</div><button name="action" value="generate">Generate Recommendations</button></form>
+</section>
+
+{% if error %}<div class="error">{{error}}</div>{% endif %}
+{% if recommendations %}
+<section class="card"><h2>Personalized Recommendations</h2>
+{% if updated %}<p class="success">? Recommendations updated using your feedback.</p>{% endif %}
+{% for r in recommendations %}
+<div class="rec"><div class="title">{{loop.index}}. {{r.title}}</div>
+<div class="reason">{{r.reason}}</div>
+<div class="score">Match Score: {{r.score}}%</div></div>
+{% endfor %}</section>
+{% endif %}
+
+<section class="card"><h2>Recommendation Feedback</h2>
+<p style="font-size:12px">Want better recommendations? Tell us what you are more interested in.</p>
+<form method="POST">
+{% for key,value in profile.items() %}<input type="hidden" name="{{key}}" value="{{value}}">{% endfor %}
+<label>Your Feedback</label><textarea name="feedback" placeholder="Example: I am more interested in AI than Web Development">{{feedback}}</textarea>
+<button name="action" value="update">Update Recommendations</button>
+</form></section>
+<footer>Personalized Recommendation System · Powered by Ollama</footer>
+</main></body></html>
